@@ -1,0 +1,4 @@
+{
+  "session": "your_session_token",
+  "data_dir": "./data"
+}
