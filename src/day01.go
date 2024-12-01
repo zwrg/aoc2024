@@ -11,31 +11,26 @@ import (
 	"strings"
 )
 
-func part1(left []int, right []int) {
+func day1part1(left []int, right []int) int {
 	sort.Ints(left)
 	sort.Ints(right)
-
 	var diffSum = 0
-
 	for i := range left {
 		diffSum += int(math.Abs(float64(left[i] - right[i])))
 	}
-
-	println(diffSum)
+	return diffSum
 }
 
-func part2(left []int, right []int) {
+func day1part2(left []int, right []int) int {
 	countMap := make(map[int]int)
 	for _, number := range right {
 		countMap[number]++
 	}
-
 	sum := 0
 	for _, number := range left {
 		sum += number * countMap[number]
 	}
-
-	println(sum)
+	return sum
 }
 
 func main() {
@@ -72,6 +67,6 @@ func main() {
 		rightColumn = append(rightColumn, num2)
 	}
 
-	part1(leftColumn, rightColumn)
-	part2(leftColumn, rightColumn)
+	println(day1part1(leftColumn, rightColumn))
+	println(day1part2(leftColumn, rightColumn))
 }
