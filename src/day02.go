@@ -11,55 +11,48 @@ import (
 )
 
 func day2IsLineSafe(line []int) bool {
-	isIncreasing, isDecreasing, check := true, true, true
+	isIncreasing, isDecreasing := true, true
 	for i := 0; i < len(line)-1; i++ {
 		diff := line[i] - line[i+1]
-		if diff <= 0 {
+		if diff > 0 {
 			isIncreasing = false
 		}
-		if diff >= 0 {
+		if diff < 0 {
 			isDecreasing = false
 		}
 		if math.Abs(float64(diff)) < 1 || math.Abs(float64(diff)) > 3 {
-			check = false
+			return false
 		}
 	}
-	return check && (isIncreasing || isDecreasing)
+	return isIncreasing || isDecreasing
 }
 
 func day2part1(numbers [][]int) int {
-	sumSafe := 0
+	count := 0
 	for _, line := range numbers {
 		if day2IsLineSafe(line) {
-			sumSafe++
+			count++
 		}
 	}
-	return sumSafe
+	return count
 }
 
 func day2part2(numbers [][]int) int {
-	sumSafe := 0
+	count := 0
 	for _, line := range numbers {
 		if day2IsLineSafe(line) {
-			sumSafe++
+			count++
 			continue
 		}
-
-		isSafeAfterRemoving := false
 		for i := 0; i < len(line); i++ {
-			lineWithoutElement := append([]int{}, line[:i]...)
-			lineWithoutElement = append(lineWithoutElement, line[i+1:]...)
-			if day2IsLineSafe(lineWithoutElement) {
-				isSafeAfterRemoving = true
+			modifiedLine := append(append([]int{}, line[:i]...), line[i+1:]...)
+			if day2IsLineSafe(modifiedLine) {
+				count++
 				break
 			}
 		}
-
-		if isSafeAfterRemoving {
-			sumSafe++
-		}
 	}
-	return sumSafe
+	return count
 }
 
 func main() {
