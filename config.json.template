@@ -1,4 +1,5 @@
 {
   "session": "your_session_token",
+  "year": 2024,
   "data_dir": "./data"
 }
