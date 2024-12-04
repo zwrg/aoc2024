@@ -45,8 +45,13 @@ func day4checkForMAS(grid [][]string, x int, y int) int {
 
 func day4part1(grid [][]string) int {
 	count := 0
+<<<<<<< HEAD
 	for i := range grid {
 		for j := range grid[i] {
+=======
+	for i, _ := range grid {
+		for j, _ := range grid[i] {
+>>>>>>> origin/main
 			if grid[i][j] == "X" {
 				count += day4checkForXMAS(grid, i, j)
 			}
@@ -58,8 +63,13 @@ func day4part1(grid [][]string) int {
 
 func day4part2(grid [][]string) int {
 	count := 0
+<<<<<<< HEAD
 	for i := range grid {
 		for j := range grid[i] {
+=======
+	for i, _ := range grid {
+		for j, _ := range grid[i] {
+>>>>>>> origin/main
 			if grid[i][j] == "A" {
 				count += day4checkForMAS(grid, i, j)
 			}
