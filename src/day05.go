@@ -1,68 +1,30 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 )
 
-func day5FindIndex(array []int, target int) int {
-	for i, v := range array {
-		if v == target {
-			return i
-		}
-	}
-	return -1
-}
-
-func checkValidity(update []int, rules [][]int) (bool, int) {
-	for i, updateNumber := range update {
-		for _, rule := range rules {
-			var index = day5FindIndex(update, rule[1])
-			if updateNumber == rule[0] && index != -1 && i > index {
-				return false, i
-			}
-		}
-	}
-	return true, -1
-}
-
-func day5part1(rules [][]int, updates [][]int) int {
+func day5part1(data [][]int, compareFn func(a, b int) int) int {
 	sum := 0
-	for _, update := range updates {
-		var isUpdateValid, _ = checkValidity(update, rules)
-
-		if isUpdateValid {
-			var middle = update[(len(update) / 2)]
-			sum += middle
+	for _, v := range data {
+		if slices.IsSortedFunc(v, compareFn) {
+			sum += v[len(v)/2]
 		}
 	}
 	return sum
 }
 
-func day5part2(rules [][]int, updates [][]int) int {
+func day5part2(data [][]int, compareFn func(a, b int) int) int {
 	sum := 0
-	for _, _update := range updates {
-		//fmt.Printf("calculating %d/%d\n", i, len(updates))
-		var isUpdateValid, _ = checkValidity(_update, rules)
-
-		if !isUpdateValid {
-			//fmt.Println("invalid update", _update)
-			update := make([]int, len(_update))
-			copy(update, _update)
-
-			for valid, invalidIndex := checkValidity(update, rules); !valid; valid, invalidIndex = checkValidity(update, rules) {
-				//fmt.Printf("%v, %d, %d, %v\n", valid, invalidIndex, update[invalidIndex], update)
-				pop := update[invalidIndex]
-				update = append(update[:invalidIndex], update[invalidIndex+1:]...)
-				update = append([]int{pop}, update...)
-			}
-
-			var middle = update[(len(update) / 2)]
-			sum += middle
+	for _, v := range data {
+		if !slices.IsSortedFunc(v, compareFn) {
+			slices.SortFunc(v, compareFn)
+			sum += v[len(v)/2]
 		}
 	}
 	return sum
@@ -83,33 +45,37 @@ func main() {
 		}
 	}(file)
 
-	scanner := bufio.NewScanner(file)
-	// todo: create map from it
-	var rules [][]int
-	var updates [][]int
+	input, _ := os.ReadFile(filePath)
 
-	for scanner.Scan() {
-		line := scanner.Text()
+	split := strings.Split(string(input), "\n\n")
+	_rules, _data := strings.Split(split[0], "\n"), strings.Split(split[1], "\n")
 
-		if strings.Contains(line, "|") {
-			var rule = strings.Split(line, "|")
-			var number, _ = strconv.Atoi(rule[0])
-			var numberRule, _ = strconv.Atoi(rule[1])
+	rules := make([][]int, len(_rules))
+	data := make([][]int, len(_data))
 
-			rules = append(rules, []int{number, numberRule})
-		}
-		if strings.Contains(line, ",") {
-			var numbers = strings.Split(line, ",")
-			var step []int
-			for _, number := range numbers {
-				var n, _ = strconv.Atoi(number)
-				step = append(step, n)
-			}
+	for i, rule := range _rules {
+		r := strings.Split(rule, "|")
+		num, _ := strconv.Atoi(r[0])
+		numRule, _ := strconv.Atoi(r[1])
+		rules[i] = []int{num, numRule}
+	}
 
-			updates = append(updates, step)
+	for i, operation := range _data {
+		for _, op := range strings.Split(operation, ",") {
+			var n, _ = strconv.Atoi(op)
+			data[i] = append(data[i], n)
 		}
 	}
 
-	println(day5part1(rules, updates))
-	println(day5part2(rules, updates))
+	compareFunction := func(a, b int) int {
+		for _, r := range rules {
+			if r[0] == a && r[1] == b {
+				return -1
+			}
+		}
+		return 0
+	}
+
+	println(day5part1(data, compareFunction))
+	println(day5part2(data, compareFunction))
 }
